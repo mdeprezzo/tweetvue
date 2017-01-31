@@ -6,12 +6,12 @@
         .facebook-avatar 
           img.lazy(:src='tweet.user.profile_image_url', width='34', height='34')
         .facebook-name 
-          {{ tweet.user.name }}
+          {{ tweet | userFilter }}
         .facebook-date 
-          {{ tweet.created_at | diffForHumans }}
+          {{ tweet.created_at | dateDiffForHumans }}
       f7-card-content 
         {{ tweet.text }}
-        img.lazy(v-if='tweet.entities.media', :src='tweet.entities.media[0].media_url', width='100%')
+        img.lazy(v-if='tweet.entities.media', :src='tweet | imgBackgroundFilter', width='100%')
       f7-card-footer.no-border
         a.link(href='#') Like
         a.link(href='#') Comment
@@ -20,19 +20,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import moment from 'moment'
+import filters from './filters'
 
 export default {
   name: 'tweet',
   computed: mapGetters({
     tweet: 'selectedTweet'
   }),
-  filters: {
-    diffForHumans: (date) => {
-      let end = new Date(date)
-      return moment(end).from(moment())
-    }
-  }
+  filters
 }
 </script>
 

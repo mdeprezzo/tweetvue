@@ -1,5 +1,5 @@
 import * as types from './mutation-types'
-import cb from '../twitter'
+import twitter from '../twitter'
 
 export default {
   selectTweet ({ commit }, tweet) {
@@ -8,25 +8,18 @@ export default {
   searchTweets ({ commit }, term) {
     window.f7.showPreloader()
 
-    cb.__call(
+    twitter.cb.__call(
       "search_tweets",
       "q="+term,
       (reply) => {
+        commit(types.SET_TWEETS, { tweets: reply.statuses })
+
+        let mainView = Dom7('#mainView')[0].f7View
+        mainView.router.load({ url: '/search/' })
+
         window.f7.hidePreloader()
-        let tweetsModified = reply.statuses
-
-        tweetsModified.map(tweet => {
-          tweet.user.screen_name_at = '@'+tweet.user.screen_name
-          tweet.user.profile_image_html = '<img src="'+tweet.user.profile_image_url+'">'
-          return tweet
-        })
-
-        commit(types.SET_TWEETS, { tweets: tweetsModified })
       },
       true // this parameter required
     )
-  },
-  clearTweets ({ commit }) {
-    commit(types.CLEAR_TWEETS)
-  }	
+  }
 }

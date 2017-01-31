@@ -1,4 +1,5 @@
 export const SELECT_TWEET = 'SELECT_TWEET'
 export const SET_TWEETS = 'SET_TWEETS'
-export const CLEAR_TWEETS = 'CLEAR_TWEETS'
-export const SEARCH_TWEETS = 'SEARCH_TWEETS'
+export const USER_LOGIN = 'USER_LOGIN'
+export const USER_LOGOUT = 'USER_LOGOUT'
+export const SET_AUTH_TWEETS = 'SET_AUTH_TWEETS'
