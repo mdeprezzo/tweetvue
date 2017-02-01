@@ -2,6 +2,7 @@ import * as types from '../mutation-types'
 import QueryString from '../../querystring'
 import twitter from '../../twitter'
 import utils from '../../utils'
+import Framework7 from 'framework7'
 
 const state = {
   oauth_token: null || utils.getToken('oauth_token'),
@@ -17,34 +18,9 @@ const getters = {
 
 const actions = {
   verifiedTokens({ commit, state }) {
-    if (QueryString.oauth_token && QueryString.oauth_verifier) {
-      twitter.cb.setToken(state.oauth_token, state.oauth_token_secret)
-
-      twitter.cb.__call(
-          "oauth_accessToken",
-          {
-            oauth_verifier: QueryString.oauth_verifier
-          },
-          (reply, rate, err) => {
-            if (err) {
-              console.log("error response or timeout exceeded" + err.error)
-              window.f7.loginScreen()
-            }
-            else if (reply) {
-              twitter.cb.setToken(reply.oauth_token, reply.oauth_token_secret)
-              utils.saveTokens(reply)
-
-              commit(types.USER_LOGIN, { 
-                oauth_token: reply.oauth_token, 
-                oauth_token_secret: reply.oauth_token_secret 
-              }) 
-
-              location.href = "/"
-            }
-          }
-      )
-    }    
-    else if (!state.oauth_token || !state.oauth_token_secret) {
+    if (!state.oauth_token || !state.oauth_token_secret) {
+      console.log(window.f7)
+      console.log(Framework7)
       window.f7.loginScreen()
     } else {
       twitter.cb.setToken(state.oauth_token, state.oauth_token_secret)
@@ -53,18 +29,22 @@ const actions = {
         "statuses_homeTimeline",
         {},
         (reply, rate, err) => {
-          commit(types.SET_AUTH_TWEETS, { tweets: reply })
+          if (err && err.errors.length > 0) {
+            console.log('test')
+          } else {
+            commit(types.SET_AUTH_TWEETS, { tweets: reply })
+          }
         }
       )    
     }
   },
 
-	login({ commit }) {
+	login({ dispatch, commit }) {
     window.f7.showPreloader()
 
   	twitter.cb.__call(
       "oauth_requestToken",
-      {oauth_callback: "http://localhost:8080/"},
+      {oauth_callback: "about:blank?twitvue=true"},
       (reply,rate,err) => {
         if (err) {
           console.log("error response or timeout exceeded" + err.error)
@@ -81,13 +61,51 @@ const actions = {
           twitter.cb.__call(
             "oauth_authorize", {},
             (auth_url) => {
-              location.href = auth_url
+              let ref = cordova.inAppBrowser.open(auth_url, '_blank', 'location=yes')
+              
+              ref.addEventListener('loadStart', (params) => {
+                if (params.url.indexOf('about:blank?twitvue=true') == 0) {
+                  let searchString = params.url.substring(params.url.indexOf('?twitvue=true'))
+                  let qs = QueryString(searchString)
+                  ref.close()
+
+                  dispatch('authorizeUser', qs)
+                }
+              })
             }
           )
         }
 	    }
     )
 	},
+
+  authorizeUser({ commit, state }, { oauth_token, oauth_verifier }) {
+    twitter.cb.setToken(state.oauth_token, state.oauth_token_secret)
+
+    twitter.cb.__call(
+      "oauth_accessToken",
+      {
+        oauth_verifier: oauth_verifier
+      },
+      (reply, rate, err) => {
+        if (err) {
+          console.log("error response or timeout exceeded" + err.error)
+          window.f7.loginScreen()
+        }
+        else if (reply) {
+          twitter.cb.setToken(reply.oauth_token, reply.oauth_token_secret)
+          utils.saveTokens(reply)
+
+          commit(types.USER_LOGIN, { 
+            oauth_token: reply.oauth_token, 
+            oauth_token_secret: reply.oauth_token_secret 
+          }) 
+
+          location.reload()
+        }
+      }
+    )
+  },
 
   logout({ commit }) {
     twitter.cb.logout()

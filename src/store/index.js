@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import mutations from './mutations'
 import actions from './actions'
 import auth from './modules/auth'
+import tweet from './modules/tweet'
 
 Vue.use(Vuex)
 
@@ -12,7 +13,8 @@ export default new Vuex.Store({
     selectedTweet: {}
   },
   modules: {
-    auth
+    auth,
+    tweet
   },
   mutations,
   actions,

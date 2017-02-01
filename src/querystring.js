@@ -1,8 +1,6 @@
-var QueryString = function () {
-  // This function is anonymous, is executed immediately and 
-  // the return value is assigned to QueryString!
+var QueryString =  (searchstring) => {
   var query_string = {};
-  var query = window.location.search.substring(1);
+  var query = searchstring.substring(1);
   var vars = query.split("&");
   for (var i=0;i<vars.length;i++) {
     var pair = vars[i].split("=");
@@ -19,6 +17,6 @@ var QueryString = function () {
     }
   } 
   return query_string;
-}();
+}
 
 export default QueryString;

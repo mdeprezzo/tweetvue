@@ -37,6 +37,7 @@ module.exports = {
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue',
+      'Framework7': path.join(__dirname, '/node_modules/framework7/dist/framework7.min.js'),
       'Framework7Vue': path.join(__dirname, '/node_modules/framework7-vue/dist/framework7-vue.min.js')
     }
   },
