@@ -23,13 +23,16 @@ const actions = {
     } else {
       twitter.cb.setToken(state.oauth_token, state.oauth_token_secret)
 
+      window.f7.showPreloader()
       twitter.cb.__call(
         "statuses_homeTimeline",
         {},
         (reply, rate, err) => {
-          if (err && err.errors.length > 0) {
-            console.log('test')
+          if (err && err.errors.length > 0 || reply && reply.errors && reply.errors > 0) {
+            window.f7.loginScreen()
+            window.f7.hidePreloader()
           } else {
+            window.f7.hidePreloader()
             commit(types.SET_AUTH_TWEETS, { tweets: reply })
           }
         }
@@ -42,7 +45,7 @@ const actions = {
 
   	twitter.cb.__call(
       "oauth_requestToken",
-      {oauth_callback: "about:blank?twitvue=true"},
+      {oauth_callback: "http://localhost"},
       (reply,rate,err) => {
         if (err) {
           console.log("error response or timeout exceeded " + err.error)
@@ -59,12 +62,10 @@ const actions = {
           twitter.cb.__call(
             "oauth_authorize", {},
             (auth_url) => {
-              let ref = cordova.InAppBrowser.open(auth_url, '_blank', 'location=yes')
-
+              let ref = cordova.InAppBrowser.open(auth_url, '_blank', 'location=no')
               ref.addEventListener('loadstart', (param) => {
-                console.log(param)
-                if (param.url.indexOf('about:blank?twitvue=true') == 0) {
-                  let pos = param.url.indexOf('?twitvue=true')
+                if (param.url.match(/localhost/)) {
+                  let pos = param.url.indexOf('http://localhost')
                   let searchString = param.url.substring(pos)
                   let qs = QueryString(searchString)
                   ref.close()
