@@ -45,7 +45,7 @@ const actions = {
       {oauth_callback: "about:blank?twitvue=true"},
       (reply,rate,err) => {
         if (err) {
-          console.log("error response or timeout exceeded" + err.error)
+          console.log("error response or timeout exceeded " + err.error)
         }
         if (reply) {
           twitter.cb.setToken(reply.oauth_token, reply.oauth_token_secret)
@@ -59,11 +59,13 @@ const actions = {
           twitter.cb.__call(
             "oauth_authorize", {},
             (auth_url) => {
-              let ref = cordova.inAppBrowser.open(auth_url, '_blank', 'location=yes')
-              
-              ref.addEventListener('loadStart', (params) => {
-                if (params.url.indexOf('about:blank?twitvue=true') == 0) {
-                  let searchString = params.url.substring(params.url.indexOf('?twitvue=true'))
+              let ref = cordova.InAppBrowser.open(auth_url, '_blank', 'location=yes')
+
+              ref.addEventListener('loadstart', (param) => {
+                console.log(param)
+                if (param.url.indexOf('about:blank?twitvue=true') == 0) {
+                  let pos = param.url.indexOf('?twitvue=true')
+                  let searchString = param.url.substring(pos)
                   let qs = QueryString(searchString)
                   ref.close()
 
