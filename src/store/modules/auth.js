@@ -19,8 +19,6 @@ const getters = {
 const actions = {
   verifiedTokens({ commit, state }) {
     if (!state.oauth_token || !state.oauth_token_secret) {
-      console.log(window.f7)
-      console.log(Framework7)
       window.f7.loginScreen()
     } else {
       twitter.cb.setToken(state.oauth_token, state.oauth_token_secret)

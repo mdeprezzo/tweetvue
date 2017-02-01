@@ -50,6 +50,8 @@ export default {
     }
   },
   created() {
+    console.log(window.f7)
+    console.log(this.$f7)
     this.$store.dispatch('verifiedTokens')
   },
   methods: {
