@@ -22,10 +22,10 @@ const actions = {
       window.f7.loginScreen()
     } else {
       twitter.cb.setToken(state.oauth_token, state.oauth_token_secret)
-
+      //"statuses_homeTimeline",
       window.f7.showPreloader()
       twitter.cb.__call(
-        "statuses_homeTimeline",
+        "statuses_userTimeline",
         {},
         (reply, rate, err) => {
           if (err && err.errors.length > 0 || reply && reply.errors && reply.errors > 0) {

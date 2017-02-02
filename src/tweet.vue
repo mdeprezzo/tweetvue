@@ -13,9 +13,9 @@
         {{ tweet.text }}
         img.lazy(v-if='tweet.entities.media', :src='tweet | imgBackgroundFilter', width='100%')
       f7-card-footer.no-border
+        a.link(href='#') Reply
+        a.link(href='#') Retweet
         a.link(href='#') Like
-        a.link(href='#') Comment
-        a.link(href='#') Share
 </template>
 
 <script>

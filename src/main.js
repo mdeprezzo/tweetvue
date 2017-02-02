@@ -16,7 +16,8 @@ document.addEventListener('deviceready', () => {
       root: '#app',
       animateNavBackIcon: true,
       routes: Routes,
-      material: true
+      material: true,
+      pushState: true
     },
     methods: {
       onF7Init(F7) {
